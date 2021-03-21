@@ -1,7 +1,11 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema, Document } from 'mongoose'
 import { Album } from '../types'
 
-const albumSchema = new mongoose.Schema({
+export interface AlbumDocument extends Album, Document {
+  id: string
+}
+
+const albumSchema: Schema = new Schema({
     title: {
         type: String,
         required: true,
@@ -13,9 +17,31 @@ const albumSchema = new mongoose.Schema({
         slugPaddingSize: 4,
         unique: true
       },
-      content: String 
+      content: String,
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      category: {
+        type: Schema.Types.ObjectId,
+        ref: 'Category'
+      },
+      pictures: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Picture'
+        }
+      ]
 })
 
-const albumModel = mongoose.model<Album & mongoose.Document>('Album', albumSchema)
+albumSchema.set('toJSON', {
+  transform: (_doc: Document, returnedObject: AlbumDocument) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
 
-export default albumModel
+const Album = mongoose.model<AlbumDocument>('Album', albumSchema)
+
+export default Album
