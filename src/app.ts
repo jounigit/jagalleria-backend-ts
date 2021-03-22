@@ -7,6 +7,7 @@ import userRouter from './routes/users'
 import albumRouter from './routes/albums'
 import categoryRouter from './routes/categories'
 import pictureRouter from './routes/pictures'
+import middleware from './utils/middleware'
 import logger from './utils/logger'
 import mongoose from 'mongoose'
 // import { config } from 'dotenv/types'
@@ -27,8 +28,9 @@ mongoose.connect(`${process.env.MONGODB_URI}`, {
     logger.info('connected to MongoDB')
   })
 
-app.use(express.json());
-app.use(cors())
+  app.use(cors())
+  app.use(express.json())
+  app.use(middleware.requestLogger)
 
 app.get('/api/ping', (_req, res) => { 
     console.log('someone pinged here');
@@ -40,5 +42,8 @@ app.use('/api/users', userRouter)
 app.use('/api/albums', albumRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/pictures', pictureRouter)
+
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
 
 export default app

@@ -16,14 +16,10 @@ const getAll = async (_req: Request, res: Response) => {
 //******************* Get one ***********************************/
 const getOne = async (req: Request, res: Response) => {
     const category = await Category.findById(req.params.id)
-
-    if (!category) {
-        return res.status(404).send({ error: 'Not Found' })
-    }
-
     return res.send(category)
 }
 
+// return res.status(404).send({ error: 'Not Found' })
 //******************* Create new ***********************************/
 const createOne = async (req: Request, res: Response) => {
     const { title, content }: {title:string; content:string} = req.body
@@ -61,15 +57,13 @@ const updateOne = async (req: Request, res: Response) => {
 
 //******************* Delete one ***********************************/
 const deleteOne = async (req: Request, res: Response) => {
-    console.log('Delete: ', req.params)
     const category = await Category.findById(req.params.id)
 
-    if (!category) {
-        return res.status(404).send({ error: 'Not Found' })
+    // if (!category) { return }
+    if (category) {
+        await category.remove()
+        return res.status(204).end()
     }
-
-    await category.remove()
-    return res.status(204).end()
 }
 
 export default {
