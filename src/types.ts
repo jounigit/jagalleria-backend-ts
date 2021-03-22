@@ -39,3 +39,4 @@ export interface Picture extends BaseModel {
 
 export type NewAlbum = Omit<Album, 'id'>
 export type NewCategory = Omit<Category, 'id'>
+// export type NewCategory = Omit<Category, 'id'>

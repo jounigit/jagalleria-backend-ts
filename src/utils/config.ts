@@ -2,8 +2,15 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-let PORT = process.env.PORT
-let MONGODB_URI = process.env.MONGODB_URI
+const PORT = process.env.PORT
+let MONGODB_URI
+
+if (process.env.NODE_ENV === 'test') {
+    console.log('TESTING ENV config', process.env.TEST_MONGODB_URI)
+    MONGODB_URI = process.env.TEST_MONGODB_URI
+}
+
+MONGODB_URI = process.env.MONGODB_URI
 
 export default {
     PORT,

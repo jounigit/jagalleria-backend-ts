@@ -1,7 +1,11 @@
 import mongoose from 'mongoose'
 import { User } from '../types'
 
-type UserDocument = User & mongoose.Document
+// type UserDocument = User & mongoose.Document
+export interface UserDocument extends User, mongoose.Document {
+  id: string;
+  passwordHash: string;
+}
 
 const userSchema = new mongoose.Schema({
     username: {
