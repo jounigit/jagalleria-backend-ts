@@ -7,17 +7,28 @@ import userRouter from './routes/users'
 import albumRouter from './routes/albums'
 import categoryRouter from './routes/categories'
 import pictureRouter from './routes/pictures'
+import config from './utils/config'
 import middleware from './utils/middleware'
 import logger from './utils/logger'
 import mongoose from 'mongoose'
-import 'dotenv/config'
+// import 'dotenv/config'
+
+declare global {
+  namespace Express {
+    interface User {
+        id: string;
+        username: string;
+        role: string;
+    }
+  }
+}
 
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
 
-logger.info('connecting to', `${process.env.MONGODB_URI}`)
+logger.info('connecting to', `${config.MONGODB_URI}`)
 
-mongoose.connect(`${process.env.MONGODB_URI}`, {
+mongoose.connect(`${config.MONGODB_URI}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     autoIndex: false

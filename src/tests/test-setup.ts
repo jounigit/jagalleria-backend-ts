@@ -33,3 +33,16 @@ export async function dropAllCollections () {
 export async function closeDB() {
   await mongoose.connection.close()
 }
+
+export function doAfterEach () {
+  afterEach(async () => {
+    await removeAllCollections()
+  })
+}
+
+export function doAfterAll () {
+  afterAll(async () => {
+    await dropAllCollections()
+  await closeDB()
+  })
+}

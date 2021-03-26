@@ -1,7 +1,10 @@
-import mongoose from 'mongoose'
-import { Picture } from '../types'
+import mongoose, { Document } from 'mongoose'
+import { IPicture } from '../types'
 
-type PictureDocument = Picture & mongoose.Document
+// type PictureDocument = Picture & mongoose.Document
+export interface PictureDocument extends IPicture, Document {
+  id: string
+}
 
 const pictureSchema = new mongoose.Schema({
     title: {
@@ -37,6 +40,22 @@ const pictureSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     }
+  })
+
+  pictureSchema.set('toJSON', {
+    transform: (_doc: Document, returnedObject: PictureDocument) => {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject._id
+      delete returnedObject.__v
+    }
+  })
+
+  pictureSchema.pre('remove', function (next) {
+    this.model('User').updateOne(
+      { pictures: this._id },
+      { $pull: { pictures: this._id } },
+      { multi: true },
+      next )
   })
 
 const Picture = mongoose.model<PictureDocument>('Picture', pictureSchema)

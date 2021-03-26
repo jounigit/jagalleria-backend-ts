@@ -41,7 +41,7 @@ const login = async (req: Request, res: Response) => {
   }
 
   // eslint-disable-next-line no-undef
-  const token = jwt.sign(userForToken, `${process.env.SECRET}`)
+  const token = jwt.sign(userForToken, `${process.env.JWT_SECRET}`)
 
   return res
     .status(200)

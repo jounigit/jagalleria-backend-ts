@@ -1,35 +1,35 @@
-export enum Role {
+export enum IRole {
     Editor = 'editor',
     Admin = 'admin'
 }
 
-export interface User {
+export interface IUser {
     id: string;
     username: string;
     email: string;
-    role: Role;
-    categories?: Category[];
-    albums?: Album[];
-    pictures?: Picture[];
+    role: IRole;
+    categories: Array<string>;
+    albums: Array<string>;
+    pictures: Array<string>;
 }
 
 export interface BaseModel {
     id: string;
     title: string;
-    slug?: string;
+    slug: string;
     content?: string;
     user: string;
 }
-export interface Category extends BaseModel {
-    albums?: Album[];
+export interface ICategory extends BaseModel {
+    albums: Array<string>;
 }
 
-export interface Album extends BaseModel {
-    category?: Category;
-    pictures?: Picture[];
+export interface IAlbum extends BaseModel {
+    category?: string;
+    pictures: Array<string>;
 }
 
-export interface Picture extends BaseModel {
+export interface IPicture extends BaseModel {
     image: string;
     thumb: string;
     landscape: string;
@@ -37,6 +37,5 @@ export interface Picture extends BaseModel {
     publicIDThumb: string;
 }
 
-export type NewAlbum = Omit<Album, 'id'>
-export type NewCategory = Omit<Category, 'id'>
-// export type NewCategory = Omit<Category, 'id'>
+export type INewAlbum = Omit<IAlbum, 'id'>
+export type INewCategory = Omit<ICategory, 'id'>

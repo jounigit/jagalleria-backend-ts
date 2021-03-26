@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
-import { User } from '../types'
+import { IUser } from '../types'
 
 // type UserDocument = User & mongoose.Document
-export interface UserDocument extends User, mongoose.Document {
+export interface UserDocument extends IUser, mongoose.Document {
   id: string;
   passwordHash: string;
 }
@@ -40,6 +40,39 @@ const userSchema = new mongoose.Schema({
         ref: 'Picture'
       }
     ],
+  })
+
+  userSchema.set('toJSON', {
+    transform: (_doc: Document, returnedObject: UserDocument) => {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject._id
+      delete returnedObject.__v
+    }
+  })
+
+  userSchema.pre('remove', function (next) {
+    const user = this
+    user.model('Album').deleteMany(
+      { user: user._id },
+      { multi: true },
+      next)
+  })
+
+  userSchema.pre('remove', function (next) {
+    console.log('UserSchema middleware:')
+    const user = this
+    user.model('Category').deleteMany(
+      { user: user._id },
+      { multi: true },
+      next)
+  })
+
+  userSchema.pre('remove', function (next) {
+    const user = this
+    user.model('Picture').deleteMany(
+      { user: user._id },
+      { multi: true },
+      next)
   })
 
   const User = mongoose.model<UserDocument>('User', userSchema)

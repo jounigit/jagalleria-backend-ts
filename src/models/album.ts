@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose'
-import { Album } from '../types'
+import { IAlbum } from '../types'
 
-export interface AlbumDocument extends Album, Document {
+export interface AlbumDocument extends IAlbum, Document {
   id: string
 }
 
@@ -35,11 +35,28 @@ const albumSchema: Schema = new Schema({
 })
 
 albumSchema.set('toJSON', {
-  transform: (_doc: Document, returnedObject: AlbumDocument) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
+  transform: (_doc: Document, ret: AlbumDocument) => {
+    ret.id = ret._id.toString()
+    delete ret._id
+    delete ret.__v
   }
+})
+
+albumSchema.pre('remove', function (next) {
+  const album = this
+  album.model('User').updateOne(
+    { albums: album._id },
+    { $pull: { albums: album._id } },
+    { multi: true },
+    next )
+})
+
+albumSchema.pre('remove', function (next) {
+  this.model('Category').updateOne(
+    { albums: this._id },
+    { $pull: { albums: this._id } },
+    { multi: true },
+    next)
 })
 
 const Album = mongoose.model<AlbumDocument>('Album', albumSchema)
