@@ -8,7 +8,7 @@ let MONGODB_URI = process.env.MONGODB
 const JWTSecret = process.env.JWT_SECRET
 
 if (process.env.NODE_ENV === 'test') {
-    console.log('TESTING ENV config', process.env.MONGODB_TEST)
+    console.log('TESTING ENV config: ', process.env.MONGODB_TEST)
     MONGODB_URI = process.env.MONGODB_TEST
 }
 

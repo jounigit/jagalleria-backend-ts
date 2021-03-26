@@ -7,19 +7,19 @@ import {
   doAfterEach,
   doAfterAll
 } from './test-setup'
-import { Album } from '../types'
+import { IAlbum } from '../types'
 
 doAfterEach()
 doAfterAll()
 
 let token: string
-let album1: Album
+let album1: IAlbum
 // let album2: Album
 
 beforeEach( async () => {
   await helper.addTestUser()
   token = await helper.getToken()
-  // console.log('Before Test token: ', token)
+  album1 = await helper.createDoc('albums', 'album 1', token)
 })
 //***************** admin succeeds ******************************/
 describe('authorized with a valid token adding new album', () => {
@@ -34,16 +34,9 @@ describe('authorized with a valid token adding new album', () => {
 })
 
 describe('authorized with a valid token and permission', () => {
-  beforeEach( async () => {
-    const getDoc1 = await helper.createDoc('albums', 'Album 1', token)
-    album1 = getDoc1.body
-    console.log('#####Update before album1: ', album1)
-  })
-
   //** update*/ 
   test('succeeds update with valid id and permission',  async  () => {
     const title = 'Updated'
-    console.log('###### Update album1: ', album1)
 
     const response = await api
       .put(`/api/albums/${album1.id}`)

@@ -3,6 +3,7 @@ import { Request, Response} from 'express'
 import Album from '../models/album'
 import Category from '../models/category'
 import User from '../models/user'
+import { uniqStringArray } from './controllerHelpers'
 interface AlbumParams {
     title: string
     content?: string
@@ -75,13 +76,12 @@ const createOne = async (req: Request, res: Response) => {
 
 //******************* Update one ***********************************/
 const updateOne = async (req: Request, res: Response) => {
+    console.log('# Update album')
     const { category }: AlbumParams = req.body
     const album = await Album.findById(req.params.id)
     const albumCategory = album?.category
 
-    if (!album) {
-        return res.status(404).send({ error: 'Not Found' })
-    }
+    if (!album) return res.status(404).send({ error: 'Not Found' })
 
     if(category && albumCategory && category !== albumCategory) {
         removeFromCategory(albumCategory, album.id)
@@ -95,11 +95,43 @@ const updateOne = async (req: Request, res: Response) => {
 
     const updatedDoc = await Album.findById(req.params.id)
     console.log('Album updated:', updatedDoc)
-    if (!updatedDoc) { 
-        return res.status(404).send({ error: 'Not Found' })
+    if (!updatedDoc) return res.status(404).send({ error: 'Not Found' })
+    return res.json(updatedDoc.toJSON()) 
+}
+
+//******************* Update one with picture ***********************/
+const updateAlbumPicture = async (req: Request, res: Response) => {
+    console.log('# Update album picture')
+    const albumID = req.params.id
+    const pictureID = req.params.picture
+    const album = await Album.findById(albumID)
+    if (!album) return res.status(404).send({ error: 'Album not Found' })
+    const updatedPics = album.pictures.concat(pictureID)
+
+    const noDuplicates = uniqStringArray(updatedPics)
+    const albumToUpdate = { pictures: noDuplicates }
+
+    await Album.findByIdAndUpdate(albumID, albumToUpdate)
+    const updatedDoc = await Album.findById(albumID)
+    if (!updatedDoc) return res.status(404).send({ error: 'Updated album not Found' })
+    return res.json(updatedDoc.toJSON())
+}
+
+//******************* Delete picture ***********************/
+const deleteAlbumPicture = async (req: Request, res: Response) => {
+    const albumID = req.params.id
+    const pictureID = req.params.picture
+    const album = await Album.findById(albumID)
+    if (!album) return res.status(404).send({ error: 'Album not Found' })
+
+    const albumToUpdate = {
+        pictures: album.pictures.filter(p => !pictureID.includes(p))
     }
 
-    return res.json(updatedDoc.toJSON()) 
+    await Album.findByIdAndUpdate(albumID, albumToUpdate)
+    const updatedDoc = await Album.findById(albumID)
+    if (!updatedDoc) return res.status(404).send({ error: 'Updated album not Found' })
+    return res.json(updatedDoc.toJSON())
 }
 
 //******************* Delete one ***********************************/
@@ -119,5 +151,7 @@ export default {
     getOne,
     createOne,
     updateOne,
-    deleteOne
+    deleteOne,
+    updateAlbumPicture,
+    deleteAlbumPicture
 }

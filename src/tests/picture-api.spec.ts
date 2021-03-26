@@ -44,7 +44,7 @@ describe('Test with initial pictures', () => {
         .expect('Content-Type', /application\/json/)
 
 
-      console.log('All pics res: ', result)
+      // console.log('All pics res: ', result)
       expect(result.body).toEqual(allPics.body[0])
     })
   })

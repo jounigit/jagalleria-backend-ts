@@ -6,33 +6,6 @@ import bcrypt from 'bcrypt'
 import User from '../models/user'
 
 //********** constants *******************************/
-// const initialCategories: NewCategory[] = [
-//   {
-//     title: 'Category 1',
-//     content: 'HTML is easy',
-//     user: '1'
-//   },
-//   {
-//     title: 'Category 2',
-//     content: 'Täällä tätä.',
-//     user: '1'
-//   }
-// ]
-
-const initialAlbums = [
-  {
-    title: 'Album 1',
-    content: 'Täällä 1',
-  },
-  {
-    title: 'Album 2',
-    content: 'Täällä 2.',
-  },
-  {
-    title: 'Album 3',
-    content: 'Täällä 3',
-  },
-]
 
 const initialPictures = [
   {
@@ -126,7 +99,7 @@ export default {
   email,
   password,
   // initialCategories,
-  initialAlbums,
+  // initialAlbums,
   initialPictures,
   createDoc,
   createPicture,

@@ -58,6 +58,14 @@ const pictureSchema = new mongoose.Schema({
       next )
   })
 
+  pictureSchema.pre('remove', function (next) {
+    this.model('Album').updateMany(
+      { pictures: this._id },
+      { $pull: { pictures: this._id } },
+      { multi: true },
+      next)
+  })
+
 const Picture = mongoose.model<PictureDocument>('Picture', pictureSchema)
 
 export default Picture

@@ -7,19 +7,20 @@ import {
   doAfterEach,
   doAfterAll
 } from './test-setup'
-import { Category } from '../types'
+import { ICategory } from '../types'
 
 doAfterEach()
 doAfterAll()
 
 let token: string
-let category1: Category
+let category1: ICategory
 // let album2: Album
 
 
 beforeEach( async () => {
   await helper.addTestUser()
   token = await helper.getToken()
+  category1 = await helper.createDoc('categories', 'category 1', token)
 })
 
 //***************** succeeds ******************************/
@@ -35,12 +36,6 @@ describe('authorized with a valid token adding new category', () => {
 })
 
 describe('authorized with a valid token and permission', () => {
-  beforeEach( async () => {
-    const getDoc1 = await helper.createDoc('categories', 'Category 1', token)
-    category1 = getDoc1.body
-    console.log('Category update ', category1)
-  })
-
   //** update */
   test.only('succeeds update with valid id and permission',  async  () => {
     const title = 'Updated'
@@ -71,7 +66,7 @@ describe('authorized with a valid token and permission', () => {
 
 
 //***************** fails ******************************/
-describe('authorized with a valid token with no permission', () => {
+describe('authorized with no access permission', () => {
   // let wrongToken
   beforeEach( async () => {
     await api
