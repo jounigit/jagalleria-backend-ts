@@ -8,8 +8,7 @@ import {
   doAfterAll
 } from './test-setup'
 import {
-  IAlbum,
-  ICategory
+  IAlbum, ICategory
 } from '../types'
 import Album from '../models/album'
 import Category from '../models/category'
