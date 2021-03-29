@@ -59,7 +59,7 @@ const createOne = async (req: Request, res: Response) => {
         title,
         content,
         category,
-        user: req.user.id
+        user: userID
     })
 
     const savedDoc = await toSave.save()

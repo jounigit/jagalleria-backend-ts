@@ -2,6 +2,7 @@ import express from 'express'
 import jwtAuth from 'express-jwt'
 import config from '../utils/config'
 import pictureController from '../controllers/pictures'
+import uploadController from '../controllers/upload'
 
 const router = express.Router()
 
@@ -12,5 +13,6 @@ router.get('/:id', pictureController.getOne)
 router.post('/', routeAuth, pictureController.createOne)
 router.put('/:id', routeAuth, pictureController.updateOne)
 router.delete('/:id', routeAuth, pictureController.deleteOne)
+router.post('/upload', routeAuth, uploadController.uploadImage)
 
 export default router

@@ -1,6 +1,10 @@
 import express from 'express'
 import 'express-async-errors'
 const app = express()
+import fileupload from 'express-fileupload'
+app.use(fileupload({
+  useTempFiles: true
+}))
 import cors from 'cors'
 import loginRouter from './routes/login'
 import userRouter from './routes/users'
