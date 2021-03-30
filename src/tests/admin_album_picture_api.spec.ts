@@ -72,7 +72,7 @@ describe('delete relation after deleting picture', () => {
 
     const album1End = await Album.findById(album1.id)
     if (album1End)
-    expect(album1End.pictures).toHaveLength(1)
+      expect(album1End.pictures).toHaveLength(1)
   })
 
   test('delete relation by album', async () => {

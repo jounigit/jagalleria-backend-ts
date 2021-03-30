@@ -1,4 +1,4 @@
-import { Request, Response} from 'express'
+import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import User from '../models/user'
@@ -11,6 +11,7 @@ import User from '../models/user'
 
 //******************* Login ***********************************/
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const login = async (req: Request, res: Response) => {
   const { username, email, password } = req.body
   let user

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import supertest from 'supertest'
 import app from '../app'
 // import { NewCategory } from '../types'
@@ -9,24 +10,24 @@ import User from '../models/user'
 
 const initialPictures = [
   {
-    "title": "Kuva 1",
-    "slug": "kuva-1",
-    "image": "https://source.unsplash.com/random",
-    "thumb": "https://source.unsplash.com/random",
-    "landscape": "https://source.unsplash.com/random",
-    "publicID": "1",
-    "publicIDThumb": "1",
-    "user": "5ee7466af1c4e01d303f9dc5"
+    'title': 'Kuva 1',
+    'slug': 'kuva-1',
+    'image': 'https://source.unsplash.com/random',
+    'thumb': 'https://source.unsplash.com/random',
+    'landscape': 'https://source.unsplash.com/random',
+    'publicID': '1',
+    'publicIDThumb': '1',
+    'user': '5ee7466af1c4e01d303f9dc5'
   },
   {
-    "title": "Kuva 2",
-    "slug": "kuva-2",
-    "image": "https://source.unsplash.com/random",
-    "thumb": "https://source.unsplash.com/random",
-    "landscape": "https://source.unsplash.com/random",
-    "publicID": "2",
-    "publicIDThumb": "2",
-    "user": "5ee7466af1c4e01d303f9dc5"
+    'title': 'Kuva 2',
+    'slug': 'kuva-2',
+    'image': 'https://source.unsplash.com/random',
+    'thumb': 'https://source.unsplash.com/random',
+    'landscape': 'https://source.unsplash.com/random',
+    'publicID': '2',
+    'publicIDThumb': '2',
+    'user': '5ee7466af1c4e01d303f9dc5'
   }
 ]
 
@@ -72,22 +73,22 @@ const createDoc = async(path: string, title: string, token: string) => {
     .send({ title })
     .set('Authorization', `Bearer ${token}`)
     .expect(200)
-    console.log('Create doc: ', res.body)
-    return res.body
+  console.log('Create doc: ', res.body)
+  return res.body
 }
 
 const createPicture = async(title: string, token: string) => {
   const newPic = {
-    "title": title,
-    "image": "https://source.unsplash.com/random",
-    "thumb": "https://source.unsplash.com/random",
-    "landscape": "https://source.unsplash.com/random",
-    "publicID": "2",
-    "publicIDThumb": "2"
+    'title': title,
+    'image': 'https://source.unsplash.com/random',
+    'thumb': 'https://source.unsplash.com/random',
+    'landscape': 'https://source.unsplash.com/random',
+    'publicID': '2',
+    'publicIDThumb': '2'
   }
 
   const res = await api
-    .post(`/api/pictures`)
+    .post('/api/pictures')
     .send(newPic)
     .set('Authorization', `Bearer ${token}`)
     .expect(200)

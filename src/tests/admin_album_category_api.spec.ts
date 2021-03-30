@@ -54,7 +54,7 @@ describe('make relation between album and category', () => {
     const album1Now = await updateAlbum(category1.id, album1.id)
     const categoryNow = await Category.findById(category1.id)
     if (categoryNow)
-    expect(album1Now.id).toContain(categoryNow.albums)
+      expect(album1Now.id).toContain(categoryNow.albums)
   })
 })
 
@@ -68,7 +68,7 @@ describe('make relation between 2 albums and category', () => {
     const atEnd = await Category.findById(category1.id)
     console.log('# At end: ', atEnd)
     if (atEnd)
-    expect(atEnd.albums.length).toBe(category1.albums.length+2)
+      expect(atEnd.albums.length).toBe(category1.albums.length+2)
   })
 })
 
@@ -92,7 +92,7 @@ describe('update relation', () => {
     // console.log('Album 1: ',  album1Now)
     const atEnd = await Category.findById(category1.id)
     if (atEnd)
-    expect(atEnd.albums.length).toBe(0)
+      expect(atEnd.albums.length).toBe(0)
   })
 })
 
@@ -111,7 +111,7 @@ describe('delete relation after deleting album or category', () => {
 
     const album1End = await Album.findById(album1.id)
     if (album1End)
-    expect(album1End.category?.toString()).not.toBe(alCategory)
+      expect(album1End.category?.toString()).not.toBe(alCategory)
   })
 
   test('should not have category with album', async () => {
@@ -124,7 +124,7 @@ describe('delete relation after deleting album or category', () => {
 
     const categoryNow = await Category.findById(category1.id)
     if (categoryNow)
-    expect(categoryNow.albums.length).toBe(0)
+      expect(categoryNow.albums.length).toBe(0)
   })
 })
 

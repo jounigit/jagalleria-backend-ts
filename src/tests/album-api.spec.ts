@@ -35,27 +35,27 @@ afterAll(async () => {
 
 //****************** succeeds ************************************/
 describe('Test with initial albums', () => {
-    test('succeeds return albums as json', async () => {
-      console.log('Cats 1: ', album1)
-      console.log('Cats 2: ', album2)
+  test('succeeds return albums as json', async () => {
+    console.log('Cats 1: ', album1)
+    console.log('Cats 2: ', album2)
 
-      const res = await api
+    const res = await api
       .get('/api/albums')
       .expect(200)
       .expect('Content-Type', /application\/json/)
-      expect(res.body.length).toBe(2)
-    })
-
-      // get one
-    test('succeeds view a specific album', async () => {
-      const result = await api
-        .get(`/api/albums/${album1.id}`)
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
-
-      expect(result.body).toEqual(album1)
-    })
+    expect(res.body.length).toBe(2)
   })
+
+  // get one
+  test('succeeds view a specific album', async () => {
+    const result = await api
+      .get(`/api/albums/${album1.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body).toEqual(album1)
+  })
+})
 
 //****************** fails ************************************/
 // status code 404
@@ -65,7 +65,7 @@ describe('if id is invalid', () => {
   test('fails with statuscode 400', async () => {
 
     await api
-      .get(`/api/albums/000`)
+      .get('/api/albums/000')
       .expect(400)
   })
 })

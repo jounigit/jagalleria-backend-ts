@@ -18,7 +18,7 @@ let picture1: IPicture
 beforeEach( async () => {
   await helper.addTestUser()
   token = await helper.getToken()
-    picture1 = await helper.createPicture('Kuva 1', token)
+  picture1 = await helper.createPicture('Kuva 1', token)
 })
 
 //***************** admin succeeds ******************************/

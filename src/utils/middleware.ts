@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response} from 'express'
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { NextFunction, Request, Response } from 'express'
 import logger from './logger'
 
 const requestLogger = (req: Request, _: Response, next: NextFunction) => {
@@ -17,13 +18,13 @@ const errorHandler = (error: Error, _: Request, res: Response, next: NextFunctio
 
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'malformatted id' })
-  } 
+  }
   if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message })
-  } 
+  }
   if (error.name === 'JsonWebTokenError') {
     return res.status(401).json({ error: 'invalid token' })
-  } 
+  }
   if (error.name === 'UnauthorizedError') {
     return res.status(401).json({ error: 'unauthorized' })
   }

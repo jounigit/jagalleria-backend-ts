@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable no-undef */
 // test-setup.js
 import mongoose from 'mongoose'
@@ -24,7 +25,7 @@ export async function dropAllCollections () {
       // This error occurs when you use it.todo. You can
       // safely ignore this error too
       if (error.message.includes('a background operation is currently running'))
-      console.log(error.message)
+        console.log(error.message)
       return
     }
   }
@@ -43,6 +44,6 @@ export function doAfterEach () {
 export function doAfterAll () {
   afterAll(async () => {
     await dropAllCollections()
-  await closeDB()
+    await closeDB()
   })
 }

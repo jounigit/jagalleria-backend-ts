@@ -6,32 +6,32 @@ export interface AlbumDocument extends IAlbum, Document {
 }
 
 const albumSchema: Schema = new Schema({
-    title: {
-        type: String,
-        required: true,
-        unique: true
-      },
-      slug: {
-        type: String,
-        slug: 'title',
-        slugPaddingSize: 4,
-        unique: true
-      },
-      content: String,
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-      },
-      category: {
-        type: Schema.Types.ObjectId,
-        ref: 'Category'
-      },
-      pictures: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Picture'
-        }
-      ]
+  title: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  slug: {
+    type: String,
+    slug: 'title',
+    slugPaddingSize: 4,
+    unique: true
+  },
+  content: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category'
+  },
+  pictures: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Picture'
+    }
+  ]
 })
 
 albumSchema.set('toJSON', {
@@ -43,10 +43,9 @@ albumSchema.set('toJSON', {
 })
 
 albumSchema.pre('remove', function (next) {
-  const album = this
-  album.model('User').updateOne(
-    { albums: album._id },
-    { $pull: { albums: album._id } },
+  this.model('User').updateOne(
+    { albums: this._id },
+    { $pull: { albums: this._id } },
     { multi: true },
     next )
 })

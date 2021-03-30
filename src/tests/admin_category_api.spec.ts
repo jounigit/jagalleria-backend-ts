@@ -53,7 +53,7 @@ describe('authorized with a valid token and permission', () => {
   //** delete */
   test.only('succeeds delete with valid id', async () => {
     const categoriesAtStart = await api.get('/api/categories')
-  
+
     await api
       .delete(`/api/categories/${category1.id}`)
       .set('Authorization', `Bearer ${token}`)

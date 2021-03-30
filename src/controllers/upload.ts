@@ -1,4 +1,4 @@
-import { Request, Response} from 'express'
+import { Request, Response } from 'express'
 import Picture from '../models/picture'
 import User from '../models/user'
 import cloudinary from 'cloudinary'
@@ -16,6 +16,7 @@ cloudinary.v2.config({
 
 
 //******************* Upload picture ***********************************/
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const uploadImage = async (req: Request, res: Response) => {
   if (!req.user) return res.sendStatus(403)
   const userID = req.user.id
@@ -25,7 +26,6 @@ const uploadImage = async (req: Request, res: Response) => {
   const file = req.files.image as UploadedFile
   const width = 1600
   const height = 1400
-  let pictureToSave
 
   const orientation = await getOrientation(file.tempFilePath)
   const options = orientation && setOptions(width, height, orientation)
@@ -41,7 +41,7 @@ const uploadImage = async (req: Request, res: Response) => {
   const lanToLanUrl = makeUrl(urlParams.transLanToLan, newPic.resource_type, newPic.type, newPic.public_id, newPic.format)
   const portToLanUrl = makeUrl(urlParams.transPortToLan, newPic.resource_type, newPic.type, newPic.public_id, newPic.format)
 
-  pictureToSave = new Picture({
+  const pictureToSave = new Picture({
     title: file.name,
     image: newPic.secure_url,
     thumb: thumbUrl,
@@ -53,10 +53,10 @@ const uploadImage = async (req: Request, res: Response) => {
   const savedDoc = await pictureToSave.save()
   if(user) addToUser(user, savedDoc._id, IArrayName.Pictures)
 
-   return res.json(savedDoc.toJSON())
+  return res.json(savedDoc.toJSON())
 }
 
-export default {uploadImage}
+export default { uploadImage }
 
 // ********************************************************************************
 

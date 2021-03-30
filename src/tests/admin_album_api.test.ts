@@ -34,7 +34,7 @@ describe('authorized with a valid token adding new album', () => {
 })
 
 describe('authorized with a valid token and permission', () => {
-  //** update*/ 
+  //** update*/
   test('succeeds update with valid id and permission',  async  () => {
     const title = 'Updated'
 
@@ -48,7 +48,7 @@ describe('authorized with a valid token and permission', () => {
     expect(title).toContain(response.body.title)
   })
 
-  //**delete */ 
+  //**delete */
   test('succeeds delete with valid id', async () => {
     const atStart = await api.get('/api/albums')
 

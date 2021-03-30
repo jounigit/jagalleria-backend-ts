@@ -18,6 +18,7 @@ import mongoose from 'mongoose'
 // import 'dotenv/config'
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface User {
         id: string;
@@ -33,21 +34,21 @@ mongoose.set('useCreateIndex', true)
 logger.info('connecting to', `${config.MONGODB_URI}`)
 
 mongoose.connect(`${config.MONGODB_URI}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    autoIndex: false
-  })
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  autoIndex: false
+})
   .then(() => {
     logger.info('connected to MongoDB')
   })
 
-  app.use(cors())
-  app.use(express.json())
-  app.use(middleware.requestLogger)
+app.use(cors())
+app.use(express.json())
+app.use(middleware.requestLogger)
 
-app.get('/api/ping', (_req, res) => { 
-    console.log('someone pinged here');
-    res.json('pong');
+app.get('/api/ping', (_req, res) => {
+  console.log('someone pinged here')
+  res.json('pong')
 })
 
 
