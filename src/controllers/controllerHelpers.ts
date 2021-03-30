@@ -44,13 +44,27 @@ export const makeUrl = (trans: string, restype: string, type: string, pid: strin
   return `${url}/${restype}/${type}/${trans}/${pid}.${format}`
 }
 
-export enum ArrayName {
+export const paramsToMakeUrls = (width: number) => {
+  const ratio = 3/4
+  const landscapeWidth = 8000
+  const portToLanHeight = Math.floor(width * ratio)
+  const lanToLanHeight = Math.floor(landscapeWidth * ratio)
+  
+  return {
+    transThumb: 'w_500,h_500,c_fit',
+    transPortToLan: `w_${width},h_${portToLanHeight},c_fill,g_auto`,
+    transLanToLan: `w_${landscapeWidth},h_${lanToLanHeight},c_fill,g_auto`
+  }
+}
+
+// //*********** Add to user document ******************************/
+export enum IArrayName {
   Albums = 'albums',
   Categories = 'categories',
   Pictures = 'pictures'
 } 
-// //*********** Add to user document ******************************/
-export const addToUser = async (user: UserDocument, docID: string, arrName: ArrayName) => {
+
+export const addToUser = async (user: UserDocument, docID: string, arrName: IArrayName) => {
   // const user = await User.findById(userID)
   // if (!user) return 'User not found'
   if (arrName === 'albums') {

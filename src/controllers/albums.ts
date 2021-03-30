@@ -3,7 +3,7 @@ import { Request, Response} from 'express'
 import Album from '../models/album'
 import Category from '../models/category'
 import User from '../models/user'
-import { uniqStringArray } from './controllerHelpers'
+import { addToUser, IArrayName, uniqStringArray } from './controllerHelpers'
 interface AlbumParams {
     title: string
     content?: string
@@ -67,9 +67,7 @@ const createOne = async (req: Request, res: Response) => {
     // update category document
     if( category !== undefined  ) addToCategory(category, savedDoc.id)
 
-    if (!user) return res.status(404).send({error: 'Could`t update user'})
-    user.albums = user.albums.concat(savedDoc._id)
-    await user.save()
+    if (user) addToUser(user, savedDoc._id, IArrayName.Albums)
 
     return res.json(savedDoc.toJSON())
 }

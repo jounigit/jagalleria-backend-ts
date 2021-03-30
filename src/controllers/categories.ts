@@ -2,6 +2,7 @@ import { Request, Response} from 'express'
 // import jwt from 'jsonwebtoken'
 import Category from '../models/category'
 import User from '../models/user'
+import { addToUser, IArrayName } from './controllerHelpers'
 interface CategoryParams {
     title: string
     content?: string
@@ -38,13 +39,9 @@ const createOne = async (req: Request, res: Response) => {
     })
 
     const savedDoc = await categoryToSave.save()
-    if (!savedDoc) return res.status(404).send({ error: 'Not Found' })
 
-    if (!user) return res.status(404).send({error: 'Could`t update user'})
-    user.categories = user.categories.concat(savedDoc._id)
-    await user.save()
+    if (user) addToUser(user, savedDoc._id, IArrayName.Categories)
 
-    // console.log('Category saved:', savedCategory)
     return res.json(savedDoc.toJSON())
 }
 
