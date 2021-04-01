@@ -67,8 +67,7 @@ export enum IArrayName {
 }
 
 export const addToUser = async (user: UserDocument, docID: string, arrName: IArrayName) => {
-  // const user = await User.findById(userID)
-  // if (!user) return 'User not found'
+
   if (arrName === 'albums') {
     user.albums = user.albums.concat(docID)
     return await user.save()
