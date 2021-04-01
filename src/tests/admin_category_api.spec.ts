@@ -26,7 +26,7 @@ beforeEach( async () => {
 //***************** succeeds ******************************/
 describe('authorized with a valid token adding new category', () => {
   // create
-  test.only('succeeds', async () => {
+  test('succeeds', async () => {
     await api
       .post('/api/categories')
       .send({ title: 'Category added' })
@@ -37,7 +37,7 @@ describe('authorized with a valid token adding new category', () => {
 
 describe('authorized with a valid token and permission', () => {
   //** update */
-  test.only('succeeds update with valid id and permission',  async  () => {
+  test('succeeds update with valid id and permission',  async  () => {
     const title = 'Updated'
 
     const response = await api
@@ -51,7 +51,7 @@ describe('authorized with a valid token and permission', () => {
   })
 
   //** delete */
-  test.only('succeeds delete with valid id', async () => {
+  test('succeeds delete with valid id', async () => {
     const categoriesAtStart = await api.get('/api/categories')
 
     await api
@@ -67,43 +67,51 @@ describe('authorized with a valid token and permission', () => {
 
 //***************** fails ******************************/
 describe('authorized with no access permission', () => {
-  // let wrongToken
+  let wrongToken: string
   beforeEach( async () => {
-    await api
-      .post('/api/categories')
-      .send({ title: 'Category to update' })
-      // .set('Authorization', `Bearer ${token}`)
-
-    // await helper.addTestUser('eilupaa', 'e@mail.com', 'vikapassi', 'editor')
-    // wrongToken = await helper.getToken('eilupaa', 'vikapassi')
+    await helper.addTestUser('eilupaa', 'e@mail.com', 'vikapassi', 'editor')
+    wrongToken = await helper.getToken('eilupaa', 'vikapassi')
   })
 
   test('fails update',  async  () => {
-    const categories = await api.get('/api/categories')
-    const category = categories.body[0]
-
-    const response = await api
-      .put(`/api/categories/${category.id}`)
+    await api
+      .put(`/api/categories/${category1.id}`)
       .send({ title: 'Updated' })
-      // .set('Authorization', `Bearer ${wrongToken}`)
+      .set('Authorization', `Bearer ${wrongToken}`)
       .expect(403)
-      .expect('Content-Type', /application\/json/)
-
-    const { error } = response.body
-    expect(error).toContain('You don\'t have enough permission')
   })
 
   // delete
   test('fails delete ', async () => {
-    const categories = await api.get('/api/categories')
-    const categoryToDelete = categories.body[0]
-    const response = await api
-      .delete(`/api/categories/${categoryToDelete.id}`)
-      // .set('Authorization', `Bearer ${wrongToken}`)
+    await api
+      .delete(`/api/categories/${category1.id}`)
+      .set('Authorization', `Bearer ${wrongToken}`)
       .expect(403)
-
-    const { error } = response.body
-    expect(error).toContain('You don\'t have enough permission')
   })
 })
 
+//***************** succeeds with all permissions ******************************/
+describe('super admin with all permission', () => {
+  let superToken: string
+  beforeEach( async () => {
+    await helper.addTestUser('super', 's@mail.com', 'superpassi', 'admin')
+    superToken = await helper.getToken('super', 'superpassi')
+  })
+
+  test('succeeds update',  async  () => {
+    await api
+      .put(`/api/categories/${category1.id}`)
+      .send({ title: 'Updated' })
+      .set('Authorization', `Bearer ${superToken}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  // delete
+  test('fails delete ', async () => {
+    await api
+      .delete(`/api/categories/${category1.id}`)
+      .set('Authorization', `Bearer ${superToken}`)
+      .expect(204)
+  })
+})

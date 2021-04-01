@@ -46,6 +46,7 @@
     "mongoose": "^5.12.1",
     "mongoose-beautiful-unique-validation": "^7.1.1",
     "mongoose-slug-updater": "^3.3.0",
-    "mongoose-unique-validator": "^2.0.3"
+    "mongoose-unique-validator": "^2.0.3",
+    "ts-access-control": "^0.1.20"
   }
 }

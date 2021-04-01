@@ -9,7 +9,6 @@ import {
 } from './test-setup'
 import {
   ICategory,
-  IAlbum,
   IPicture,
   IUser } from '../types'
 
@@ -22,8 +21,6 @@ let token: string
 let token2: string
 let category1: ICategory
 let category2: ICategory
-let album1: IAlbum
-let album2: IAlbum
 let picture1: IPicture
 let picture2: IPicture
 
@@ -44,7 +41,6 @@ const nonExistingDoc = async(path: string, id: string) => {
 beforeEach( async () => {
   testUser = await helper.addTestUser()
   token = await helper.getToken()
-  album1 = await helper.createDoc('albums', 'album 1', token)
   category1 = await helper.createDoc('categories', 'category 1', token)
   picture1 = await helper.createPicture('Kuva 123', token)
 })
@@ -60,17 +56,8 @@ describe('user relations', () => {
     expect(category1.user).toBe(testUser.id)
   })
 
-  test('should have album relation', async () => {
-    expect(album1.user).toBe(testUser.id)
-  })
-
   test('should have picture relation', async () => {
     expect(picture1.user).toBe(testUser.id)
-  })
-
-  test('should have album in user', async () => {
-    console.log('## User now:', userNow)
-    expect(userNow.albums).toContain(album1.id)
   })
 
   test('should have category in user', async () => {
@@ -86,14 +73,7 @@ describe('user relations', () => {
 
 describe('user deleting', () => {
   beforeEach( async () => {
-    album2 = await helper.createDoc('albums', 'album 2', token)
     await deleteDoc('users', testUser.id, token)
-  })
-
-  test('should delete albums with relation', async () => {
-    // console.log('## TEST DELETE album: ', album1)
-    nonExistingDoc('albums', album1.id)
-    nonExistingDoc('albums', album2.id)
   })
 
   test('should delete category with relation', async () => {
@@ -112,23 +92,10 @@ describe('deleting user and own docs', () => {
   beforeEach( async () => {
     testUser2 = await helper.addTestUser('user2', 'u2@mainModule.com', 'jokusalainen')
     token2 = await helper.getToken('user2', 'jokusalainen')
-    album2 = await helper.createDoc('albums', 'album 2', token2)
     picture2 = await helper.createDoc('pictures', 'picture 2', token2)
     category2 = await helper.createDoc('categories', 'category 2', token2)
     console.log('## Before testU 2: ', testUser2)
     await deleteDoc('users', testUser.id, token)
-  })
-
-  test('should delete albums with relation', async () => {
-    // console.log('## Album 1: ', album1)
-    // console.log('## Token 2: ', token2)
-    nonExistingDoc('albums', album1.id)
-    await api
-      .get(`/api/albums/${album2.id}`)
-      .expect(200)
-
-    const all = await api.get('/api/albums')
-    expect(all.body.length).toBe(1)
   })
 
   test('should delete picture with relation', async () => {
@@ -154,13 +121,6 @@ describe('deleting user and own docs', () => {
 })
 
 describe('delete doc and user relation', () => {
-
-  test('should delete album document and user\'s relation', async () => {
-    await deleteDoc('albums', album1.id, token)
-    const userNow = await api.get(`/api/users/${testUser.id}`)
-    // console.log('UserNow: ', userNow.body)
-    expect(userNow.body.albums).toStrictEqual([])
-  })
 
   test('should delete category document and user\'s relation', async () => {
     await deleteDoc('categories', category1.id, token)

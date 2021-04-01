@@ -77,6 +77,20 @@ const createDoc = async(path: string, title: string, token: string) => {
   return res.body
 }
 
+const nonExistingDoc = async(path: string, id: string) => {
+  console.log('#Non exist doc: ', id)
+  return await api
+    .get(`/api/${path}/${id}`)
+    .expect(404)
+}
+
+const deleteDoc = async(path: string, id: string, token: string) => {
+  return await api
+    .delete(`/api/${path}/${id}`)
+    .set('Authorization', `Bearer ${token}`)
+    .expect(204)
+}
+
 const createPicture = async(title: string, token: string) => {
   const newPic = {
     'title': title,
@@ -103,6 +117,8 @@ export default {
   // initialAlbums,
   initialPictures,
   createDoc,
+  deleteDoc,
+  nonExistingDoc,
   createPicture,
   addTestUser,
   getToken,

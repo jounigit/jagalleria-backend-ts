@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 import { Request, Response } from 'express'
 // import { isNullOrUndefined } from 'node:util'
 import Album, { AlbumDocument } from '../models/album'
 import Category from '../models/category'
 import User from '../models/user'
+import { accessGranted } from '../utils/accessControl'
 import { addToUser, IArrayName, uniqStringArray } from './controllerHelpers'
 interface AlbumParams {
     title: string
@@ -11,24 +12,19 @@ interface AlbumParams {
     category?: string
 }
 //******************* Get all ***********************************/
-const getAlbums = async (_req: Request, res: Response): Promise<AlbumDocument[] | unknown> => {
+const getAlbums = async (_req: Request, res: Response): Promise<void> => {
   const albums = await Album
     .find()
     .populate('user', { username: 1 })
 
-  if (!albums) return []
-  // return res.json(albums.map(a => a.toJSON))
-  return res.send(albums)
+  res.send(albums)
 }
 
 //******************* Get one ***********************************/
-const getOne = async (req: Request, res: Response) => {
+const getOne = async (req: Request, res: Response): Promise<AlbumDocument | unknown> => {
   const album = await Album.findById(req.params.id)
 
-  if (!album) {
-    return res.status(404).send({ error: 'Not Found' })
-  }
-
+  if (!album) return res.status(404).send({ error: 'Not Found' })
   return res.send(album)
 }
 
@@ -42,15 +38,13 @@ const addToCategory = async (categoryID: string, albumID: string) => {
 }
 const removeFromCategory = async (categoryID: string, albumID: string) => {
   const category = await Category.findById(categoryID)
-  console.log('RM func:', category)
   if (category !== null) {
     category.albums = category.albums.filter(item => item.toString() !== albumID)
-    console.log('RM func after:', category)
     await category.save()
   }
 }
 //******************* Create new ***********************************/
-const createOne = async (req: Request, res: Response) => {
+const createOne = async (req: Request, res: Response): Promise<AlbumDocument | unknown> => {
   const { title, content, category }: AlbumParams = req.body
 
   if (!req.user) return res.sendStatus(403)
@@ -75,13 +69,16 @@ const createOne = async (req: Request, res: Response) => {
 }
 
 //******************* Update one ***********************************/
-const updateOne = async (req: Request, res: Response) => {
-  console.log('# Update album')
+const updateOne = async (req: Request, res: Response): Promise<AlbumDocument | unknown> => {
   const { category }: AlbumParams = req.body
   const album = await Album.findById(req.params.id)
-  const albumCategory = album?.category
-
   if (!album) return res.status(404).send({ error: 'Not Found' })
+  if (!req.user) return res.sendStatus(403)
+
+  const permission = accessGranted(req.user.id, album.user, req.user.role, 'album')
+  if (!permission.granted) return res.sendStatus(403)
+
+  const albumCategory = album.category
 
   if(category && albumCategory && category !== albumCategory) {
     removeFromCategory(albumCategory, album.id)
@@ -100,7 +97,7 @@ const updateOne = async (req: Request, res: Response) => {
 }
 
 //******************* Update one with picture ***********************/
-const updateAlbumPicture = async (req: Request, res: Response) => {
+const updateAlbumPicture = async (req: Request, res: Response): Promise<AlbumDocument | unknown> => {
   console.log('# Update album picture')
   const albumID = req.params.id
   const pictureID = req.params.picture
@@ -118,7 +115,7 @@ const updateAlbumPicture = async (req: Request, res: Response) => {
 }
 
 //******************* Delete picture ***********************/
-const deleteAlbumPicture = async (req: Request, res: Response) => {
+const deleteAlbumPicture = async (req: Request, res: Response): Promise<AlbumDocument | unknown> => {
   const albumID = req.params.id
   const pictureID = req.params.picture
   const album = await Album.findById(albumID)
@@ -135,14 +132,16 @@ const deleteAlbumPicture = async (req: Request, res: Response) => {
 }
 
 //******************* Delete one ***********************************/
-const deleteOne = async (req: Request, res: Response) => {
+const deleteOne = async (req: Request, res: Response): Promise<unknown> => {
   const album = await Album.findById(req.params.id)
-
   if (!album) return res.status(404).send({ error: 'Not Found' })
+  if (!req.user) return res.sendStatus(403)
+
+  const permission = accessGranted(req.user.id, album.user, req.user.role, 'album')
+  if (!permission.granted) return res.sendStatus(403)
 
   await album.remove()
 
-  console.log('# Album Deleted: ')
   return res.status(204).end()
 }
 

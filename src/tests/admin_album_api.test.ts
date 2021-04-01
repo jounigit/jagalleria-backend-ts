@@ -63,41 +63,54 @@ describe('authorized with a valid token and permission', () => {
 })
 
 //***************** fails accesscontroll ***************************/
-// describe('authorized with a valid token with no permission', () => {
-//   let wrongToken: string
+describe('authorized with a valid token with no permission', () => {
+  let wrongToken: string
 
-//   beforeEach( async () => {
-//     const albums = await api
-//       .post('/api/albums')
-//       .send({ title: 'Album to update' })
-//       .set('Authorization', `Bearer ${token}`)
-//     console.log('Albums Update: ', albums)
+  beforeEach( async () => {
+    await helper.addTestUser('eilupaa', 'e@mail.com', 'vikapassi', 'editor')
+    wrongToken = await helper.getToken('eilupaa', 'vikapassi')
+  })
 
-//     await helper.addTestUser('eilupaa', 'e@mail.com', 'vikapassi', 'editor')
-//     wrongToken = await helper.getToken('eilupaa', 'vikapassi')
-//   })
+  test('fails update',  async  () => {
+    await api
+      .put(`/api/albums/${album1.id}`)
+      .send({ title: 'Updated' })
+      .set('Authorization', `Bearer ${wrongToken}`)
+      .expect(403)
 
-//   test.only('fails update',  async  () => {
-//     const albums = await api.get('/api/albums')
-//     const album = albums.body[0]
+  })
 
-//     await api
-//       .put(`/api/albums/${album.id}`)
-//       .send({ title: 'Updated' })
-//       .set('Authorization', `Bearer ${wrongToken}`)
-//       .expect(403)
-//       .expect('Content-Type', /application\/json/)
+  // delete
+  test('fails delete ', async () => {
+    await api
+      .delete(`/api/albums/${album1.id}`)
+      .set('Authorization', `Bearer ${wrongToken}`)
+      .expect(403)
+  })
+})
 
-//   })
+//***************** succeeds with all permissions ******************************/
+describe('super admin with all permission', () => {
+  let superToken: string
+  beforeEach( async () => {
+    await helper.addTestUser('super', 's@mail.com', 'superpassi', 'admin')
+    superToken = await helper.getToken('super', 'superpassi')
+  })
 
-//   // delete
-//   test('fails delete ', async () => {
-//     const albums = await api.get('/api/albums')
-//     const albumToDelete = albums.body[0]
-//     await api
-//       .delete(`/api/albums/${albumToDelete.id}`)
-//       .set('Authorization', `Bearer ${wrongToken}`)
-//       .expect(403)
+  test('succeeds update',  async  () => {
+    await api
+      .put(`/api/albums/${album1.id}`)
+      .send({ title: 'Updated' })
+      .set('Authorization', `Bearer ${superToken}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
 
-//   })
-// })
+  // delete
+  test('fails delete ', async () => {
+    await api
+      .delete(`/api/albums/${album1.id}`)
+      .set('Authorization', `Bearer ${superToken}`)
+      .expect(204)
+  })
+})

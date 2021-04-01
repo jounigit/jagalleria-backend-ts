@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Request, Response } from 'express'
 // import jwt from 'jsonwebtoken'
-import Category from '../models/category'
+import Category, { CategoryDocument } from '../models/category'
 import User from '../models/user'
+import { accessGranted } from '../utils/accessControl'
 import { addToUser, IArrayName } from './controllerHelpers'
 interface CategoryParams {
     title: string
@@ -11,22 +11,20 @@ interface CategoryParams {
 }
 
 //******************* Get all ***********************************/
-const getAll = async (_req: Request, res: Response) => {
+const getAll = async (_req: Request, res: Response): Promise<void> => {
   const categories = await Category.find()
-
   res.send(categories)
 }
 
 //******************* Get one ***********************************/
-const getOne = async (req: Request, res: Response) => {
+const getOne = async (req: Request, res: Response): Promise<CategoryDocument | unknown> => {
   const category = await Category.findById(req.params.id)
 
   if (!category) return res.status(404).send({ error: 'Not Found' })
-  return res.send(category)
-}
+  return res.send(category)}
 
 //******************* Create new ***********************************/
-const createOne = async (req: Request, res: Response) => {
+const createOne = async (req: Request, res: Response): Promise<CategoryDocument | unknown> => {
   const { title, content }: CategoryParams = req.body
 
   if (!req.user) return res.sendStatus(403)
@@ -47,10 +45,14 @@ const createOne = async (req: Request, res: Response) => {
 }
 
 //******************* Update one ***********************************/
-const updateOne = async (req: Request, res: Response) => {
+const updateOne = async (req: Request, res: Response): Promise<CategoryDocument | unknown> => {
   const category = await Category.findById(req.params.id)
-
   if (!category) return res.status(404).send({ error: 'Not Found' })
+  if (!req.user) return res.sendStatus(403)
+
+  const permission = accessGranted(req.user.id, category.user, req.user.role, 'category')
+  console.log('## Permission: ', permission, ' -Granted- ', permission.granted)
+  if (!permission.granted) return res.sendStatus(403)
 
   await category.updateOne(req.body)
   const updatedDoc = await Category.findById(req.params.id)
@@ -63,10 +65,13 @@ const updateOne = async (req: Request, res: Response) => {
 }
 
 //******************* Delete one ***********************************/
-const deleteOne = async (req: Request, res: Response) => {
+const deleteOne = async (req: Request, res: Response): Promise<CategoryDocument | unknown> => {
   const category = await Category.findById(req.params.id)
-
   if (!category) return res.status(404).send({ error: 'Not Found' })
+  if (!req.user) return res.sendStatus(403)
+
+  const permission = accessGranted(req.user.id, category.user, req.user.role, 'category')
+  if (!permission.granted) return res.sendStatus(403)
 
   await category.remove()
   return res.status(204).end()

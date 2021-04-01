@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-const info = (...params: string[]) => {
+
+const info = (...params: string[]): void => {
   console.log(...params)
-  return
+
   // eslint-disable-next-line no-undef
   // if (process.env.NODE_ENV !== 'test') {
   //   console.log(...params)
   // }
 }
 
-const error = (...params: string[]) => {
+const error = (...params: string[]): void => {
   console.error(...params)
-  return
 }
 
 export default {

@@ -3,6 +3,14 @@ import { Request, Response } from 'express'
 import Picture from '../models/picture'
 import User from '../models/user'
 
+interface PictureParams {
+  title: string
+  image?: string
+  thumb?: string
+  landscape?: string
+  publicID?: string
+}
+
 //******************* Get all ***********************************/
 const getAll = async (_req: Request, res: Response) => {
   const pictures = await Picture.find({})
@@ -24,7 +32,7 @@ const getOne = async (req: Request, res: Response) => {
 
 //******************* Create new ***********************************/
 const createOne = async (req: Request, res: Response) => {
-  const { title }: {title:string;} = req.body
+  const { title, image, thumb, landscape, publicID }: PictureParams = req.body
 
   if (!req.user) return res.sendStatus(403)
   const userID = req.user.id
@@ -32,6 +40,10 @@ const createOne = async (req: Request, res: Response) => {
 
   const toSave = new Picture({
     title,
+    image,
+    thumb,
+    landscape,
+    publicID,
     user: req.user.id
   })
 

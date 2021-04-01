@@ -62,7 +62,7 @@ describe('Test with initial albums', () => {
 
 // status code 400
 describe('if id is invalid', () => {
-  test('fails with statuscode 400', async () => {
+  test.only('fails with statuscode 400', async () => {
 
     await api
       .get('/api/albums/000')

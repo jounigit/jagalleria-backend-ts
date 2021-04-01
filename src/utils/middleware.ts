@@ -16,23 +16,22 @@ const unknownEndpoint = (_: Request, res: Response) => {
 
 const errorHandler = (error: Error, _: Request, res: Response, next: NextFunction) => {
 
+  // logger.error(error.message)
+
   if (error.name === 'CastError') {
-    return res.status(400).send({ error: 'malformatted id' })
+    res.status(400).send({ error: 'malformatted id' })
   }
   if (error.name === 'ValidationError') {
-    return res.status(400).json({ error: error.message })
+    res.status(400).json({ error: error.message })
   }
   if (error.name === 'JsonWebTokenError') {
-    return res.status(401).json({ error: 'invalid token' })
+    res.status(401).json({ error: 'invalid token' })
   }
   if (error.name === 'UnauthorizedError') {
-    return res.status(401).json({ error: 'unauthorized' })
+    res.status(401).json({ error: 'unauthorized' })
   }
 
-  logger.error(error.message)
-
   next(error)
-  return
 }
 
 export default {
